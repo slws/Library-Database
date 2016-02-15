@@ -1,0 +1,6 @@
+SELECT Count(Loans.Book) AS Loans, Books.Title, Books.Author
+FROM Books INNER JOIN (Users INNER JOIN Loans ON Users.ID = Loans.User) ON Books.ID = Loans.Book
+WHERE (((Loans.Loaned)>=[Forms]![Pop_Form]![Start] And (Loans.Loaned)<=[Forms]![Pop_Form]![End]))
+GROUP BY Books.Title, Books.Author
+HAVING (((Count(Loans.Book))>0))
+ORDER BY Count(Loans.Book) DESC;

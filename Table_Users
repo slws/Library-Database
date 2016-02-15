@@ -1,0 +1,5 @@
+ID  AutoNumber (Primary Key)
+Forename  Short Text
+Surname Short Text
+DOB Date/Time
+Comments  Long Text

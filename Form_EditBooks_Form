@@ -1,0 +1,50 @@
+Option Compare Database
+'------------------------------------------------------------
+' CancelBtn_Click
+'
+'------------------------------------------------------------
+Private Sub CancelBtn_Click()
+On Error GoTo CancelBtn_Click_Err
+
+    If Me.Dirty Then
+        Me.Undo
+    End If
+    DoCmd.OpenForm "Search_Form", acNormal, "", "", , acNormal
+    DoCmd.Close acForm, "Edit_Books_Form"
+
+CancelBtn_Click_Exit:
+    Exit Sub
+
+CancelBtn_Click_Err:
+    MsgBox Error$
+    Resume CancelBtn_Click_Exit
+
+End Sub
+
+'------------------------------------------------------------
+' SaveBtn_Click
+'
+'------------------------------------------------------------
+Private Sub SaveBtn_Click()
+On Error GoTo SaveBtn_Click_Err
+
+    On Error Resume Next
+    DoCmd.RunCommand acCmdSaveRecord
+    If (MacroError <> 0) Then
+        Beep
+        MsgBox MacroError.Description, vbOKOnly, ""
+    End If
+    DoCmd.Requery
+    DoCmd.OpenForm "Search_Form", acNormal, "", "F_BID=" & Me!ID, , acNormal
+    Form_Search_Form.Refresh
+    DoCmd.Close acForm, "Edit_Books_Form"
+
+
+SaveBtn_Click_Exit:
+    Exit Sub
+
+SaveBtn_Click_Err:
+    MsgBox Error$
+    Resume SaveBtn_Click_Exit
+
+End Sub

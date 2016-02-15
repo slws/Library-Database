@@ -1,0 +1,216 @@
+Option Compare Database
+Private Sub F_BID_AfterUpdate()
+   If Not IsNull(Me.F_BID) Then
+    Recalc
+   End If
+End Sub
+Private Sub F_UID_AfterUpdate()
+   If Not IsNull(Me.F_UID) Then
+    Recalc
+   End If
+End Sub
+Private Sub FL_Book_AfterUpdate()
+Me.F_BID = Me.FL_Book
+Me.Refresh
+End Sub
+Private Sub FL_User_AfterUpdate()
+Me.F_UID = Me.FL_User
+Me.Refresh
+End Sub
+
+'------------------------------------------------------------
+' ReturnBook_Click
+'
+'------------------------------------------------------------
+Private Sub ReturnBook_Click()
+On Error GoTo ReturnBook_Click_Err
+
+    DoCmd.Close acForm, "Return_Books_Form"
+    DoCmd.OpenForm "Return_Books_Form", acNormal, "", "[Return_Books_Query]![Books]![ID]=" & Me![F_BID] & "And [Return_Books_Query]![Users]![ID]=" & Me![F_UID], acEdit, acNormal
+
+
+ReturnBook_Click_Exit:
+    Exit Sub
+
+ReturnBook_Click_Err:
+    MsgBox Error$
+    Resume ReturnBook_Click_Exit
+
+End Sub
+
+'------------------------------------------------------------
+' LoanBook_Click
+'
+'------------------------------------------------------------
+Private Sub LoanBook_Click()
+On Error GoTo LoanBook_Click_Err
+    
+    DoCmd.Close acForm, "Return_Books_Form"
+    DoCmd.OpenForm "Loan_Form", acNormal, "", "", , acNormal
+    DoCmd.GoToRecord acForm, "Loan_Form", acNewRec
+
+
+LoanBook_Click_Exit:
+    Exit Sub
+
+LoanBook_Click_Err:
+    MsgBox Error$
+    Resume LoanBook_Click_Exit
+
+End Sub
+
+
+
+
+'------------------------------------------------------------
+' FindUser_Click
+'
+'------------------------------------------------------------
+Private Sub FindUser_Click()
+On Error GoTo FindUser_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="LoanBook" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/2
+    ' _AXL:009/11/forms"><Statements><Action Name="CloseWindow"><Argument Name="ObjectType">Form</Argument><Argument Name="ObjectName">Return_Books_Form</Argument></Action><Action Name="OpenForm"><Argument Name="FormName">Return_Books_Form</Argument><Argument
+    ' _AXL: Name="WhereCondition">[Return_Books_Query]![Books]![ID]=[F_BID] And [Return_Books_Query]![Users]![ID]=[F_UID]</Argument><Argument Name="DataMode">Edit</Argument></Action></Statements></UserInterfaceMacro>
+    DoCmd.Close acQuery, "User_Query"
+    DoCmd.OpenQuery "User_Query", acViewNormal, acEdit
+
+
+FindUser_Click_Exit:
+    Exit Sub
+
+FindUser_Click_Err:
+    MsgBox Error$
+    Resume FindUser_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' AllBooks_Click
+'
+'------------------------------------------------------------
+Private Sub AllBooks_Click()
+On Error GoTo AllBooks_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="FindUser" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/2
+    ' _AXL:009/11/forms"><Statements><Action Name="CloseWindow"><Argument Name="ObjectType">Query</Argument><Argument Name="ObjectName">User_Query</Argument></Action><Action Name="OpenQuery"><Argument Name="QueryName">User_Query</Argument></Action></Statement
+    ' _AXL:s></UserInterfaceMacro>
+    
+If FS_Section = "" & FS_Author = "" & FS_Title = "" Then
+    MsgBox ("Nothing to search")
+ElseIf IsNull(FS_Author) And IsNull(FS_Section) And Len(FS_Title) > 0 Then
+    DoCmd.Close acQuery, "Books_All_QueryTitle"
+    DoCmd.OpenQuery "Books_All_QueryTitle", acViewNormal, acEdit
+
+ElseIf IsNull(FS_Title) & IsNull(FS_Section) & Len(FS_Author) > 0 Then
+    DoCmd.Close acQuery, "Books_All_QueryAuthor"
+    DoCmd.OpenQuery "Books_All_QueryAuthor", acViewNormal, acEdit
+
+ElseIf IsNull(FS_Title) & IsNull(FS_Author) & Len(FS_Section) > 0 Then
+    DoCmd.Close acQuery, "Books_All_QuerySection"
+    DoCmd.OpenQuery "Books_All_QuerySection", acViewNormal, acEdit
+
+ElseIf Len(FS_Title) > 0 & Len(FS_Author) > 0 & Len(FS_Section) > 0 Then
+    DoCmd.Close acQuery, "Books_All_QueryAll"
+    DoCmd.OpenQuery "Books_All_QueryAll", acViewNormal, acEdit
+
+ElseIf Len(FS_Title) > 0 & Len(FS_Author) > 0 & IsNull(FS_Section) Then
+    DoCmd.Close acQuery, "Books_All_Query_AuthorTitle"
+    DoCmd.OpenQuery "Books_All_Query_AuthorTitle", acViewNormal, acEdit
+
+ElseIf Len(FS_Title) > 0 & IsNull(FS_Author) & Len(FS_Section) > 0 Then
+    DoCmd.Close acQuery, "Books_All_Query_TitleSection"
+    DoCmd.OpenQuery "Books_All_Query_TitleSection", acViewNormal, acEdit
+
+ElseIf IsNull(FS_Title) & Len(FS_Author) > 0 & Len(FS_Section) > 0 Then
+    DoCmd.Close acQuery, "Books_All_Query_AuthorSection"
+    DoCmd.OpenQuery "Books_All_Query_AuthorSection", acViewNormal, acEdit
+Else
+End If
+
+AllBooks_Click_Exit:
+    Exit Sub
+
+AllBooks_Click_Err:
+    MsgBox Error$
+    Resume AllBooks_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' AvailableBooks_Click
+'
+'------------------------------------------------------------
+Private Sub AvailableBooks_Click()
+On Error GoTo AvailableBooks_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="AllBooks" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/2
+    ' _AXL:009/11/forms"><Statements><Action Name="CloseWindow"><Argument Name="ObjectType">Query</Argument><Argument Name="ObjectName">Books_All_Query</Argument></Action><Action Name="OpenQuery"><Argument Name="QueryName">Books_All_Query</Argument></Action><
+    ' _AXL:/Statements></UserInterfaceMacro>
+    DoCmd.Close acQuery, "Books_Available_Query"
+    DoCmd.OpenQuery "Books_Available_Query", acViewNormal, acEdit
+
+
+AvailableBooks_Click_Exit:
+    Exit Sub
+
+AvailableBooks_Click_Err:
+    MsgBox Error$
+    Resume AvailableBooks_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' ActiveLoans_Click
+'
+'------------------------------------------------------------
+Private Sub UH_Button_Click()
+On Error GoTo UH_Button_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="AvailableBooks" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessserv
+    ' _AXL:ices/2009/11/forms"><Statements><Action Name="CloseWindow"><Argument Name="ObjectType">Query</Argument><Argument Name="ObjectName">Books_Available_Query</Argument></Action><Action Name="OpenQuery"><Argument Name="QueryName">Books_Available_Query</A
+    ' _AXL:rgument></Action></Statements></UserInterfaceMacro>
+    DoCmd.Close acForm, "UH_Form"
+    DoCmd.OpenForm "UH_Form", acNormal, "", "", acEdit, acNormal
+
+
+UH_Button_Click_Exit:
+    Exit Sub
+
+UH_Button_Click_Err:
+    MsgBox Error$
+    Resume UH_Button_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' BH_Button_Click
+'
+'------------------------------------------------------------
+Private Sub BH_Button_Click()
+On Error GoTo BH_Button_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="ActiveLoans" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservice
+    ' _AXL:s/2009/11/forms"><Statements><Action Name="CloseWindow"><Argument Name="ObjectType">Form</Argument><Argument Name="ObjectName">UH_Form</Argument></Action><Action Name="OpenForm"><Argument Name="FormName">UH_Form</Argument><Argument Name="DataMode">
+    ' _AXL:Edit</Argument></Action></Statements></UserInterfaceMacro>
+    DoCmd.Close acForm, "BH_Form"
+    DoCmd.OpenForm "BH_Form", acNormal, "", "", , acNormal
+
+
+BH_Button_Click_Exit:
+    Exit Sub
+
+BH_Button_Click_Err:
+    MsgBox Error$
+    Resume BH_Button_Click_Exit
+
+End Sub

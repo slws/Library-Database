@@ -1,0 +1,4 @@
+SELECT Users.ID, Users.Forename, Users.Surname, Users.DOB, Books.ID, Books.Author, Books.Title, Loans.Due
+FROM Users INNER JOIN (Books INNER JOIN Loans ON Books.ID = Loans.Book) ON Users.ID = Loans.User
+WHERE (((Loans.Due)<Date()) AND ((Loans.Returned) Is Null))
+ORDER BY Loans.Due;

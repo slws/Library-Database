@@ -1,0 +1,90 @@
+Option Compare Database
+Public mrc As Integer
+Private Sub Form_BeforeUpdate(Cancel As Integer)
+If mrc < 1 Then
+    If MsgBox("You've made changes to this form." _
+        & vbCrLf & vbCrLf & "Do you want to save your changes?" _
+        , vbYesNo, "Changes Made...") = vbYes Then
+            DoCmd.Save
+        If (MacroError <> 0) Then
+            Beep
+            MsgBox MacroError.Description, vbOKOnly, ""
+        End If
+        DoCmd.SetWarnings False
+        DoCmd.OpenQuery "BooksLoaned_UpdateFalse_Query", acViewNormal, acEdit
+        DoCmd.Close acQuery, "BooksLoaned_UpdateFalse_Query"
+    Else
+                If Me.Dirty Then
+                    Me.Undo
+                End If
+    End If
+End If
+End Sub
+
+'------------------------------------------------------------
+' MarkReturned_Click
+'
+'------------------------------------------------------------
+Private Sub MarkReturned_Click()
+On Error GoTo MarkReturned_Click_Err
+mrc = 1
+Dim rdq As Integer
+If IsNull(Me.Returned) Then
+        Beep
+        rdq = MsgBox("Would you like to use today's date, " & Date & "?", vbYesNo, "No return date specified.")
+        If rdq = vbYes Then
+        DoCmd.SetWarnings False
+        DoCmd.OpenQuery "ReturnBooks_Update_Query", acViewNormal, acEdit
+        DoCmd.Close acQuery, "ReturnBooks_Update_Query"
+        DoCmd.RefreshRecord
+        mrc = 0
+        Else
+                Exit Sub
+        End If
+    End If
+    On Error Resume Next
+    DoCmd.RunCommand acCmdSaveRecord
+    If (MacroError <> 0) Then
+        Beep
+        MsgBox MacroError.Description, vbOKOnly, ""
+    End If
+    DoCmd.SetWarnings False
+    DoCmd.OpenQuery "BooksLoaned_UpdateFalse_Query", acViewNormal, acEdit
+    DoCmd.Close acQuery, "BooksLoaned_UpdateFalse_Query"
+    If Me.CurrentRecord = 1 And Me.Recordset.RecordCount = 1 Then
+        DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+        DoCmd.Close acForm, "Return_Books_Form"
+    Else
+        DoCmd.Requery
+    End If
+MarkReturned_Click_Exit:
+    Exit Sub
+
+MarkReturned_Click_Err:
+    MsgBox Error$
+    Resume MarkReturned_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' Cancel_Click
+'
+'------------------------------------------------------------
+Private Sub Cancel_Click()
+On Error GoTo Cancel_Click_Err
+
+    DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+    DoCmd.Close acForm, "Return_Books_Form"
+
+
+Cancel_Click_Exit:
+    Exit Sub
+
+Cancel_Click_Err:
+    MsgBox Error$
+    Resume Cancel_Click_Exit
+
+End Sub
+
+

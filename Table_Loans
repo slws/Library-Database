@@ -1,0 +1,6 @@
+ID  AutoNumber (Primary Key)
+User  Number
+Book Number
+Loaned Date/Time
+Due Date/Time ( Default: =DateAdd("d",14,Date()) )
+Returned Date/Time

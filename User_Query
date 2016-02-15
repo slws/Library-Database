@@ -1,0 +1,3 @@
+SELECT Users.ID, Users.Forename, Users.Surname, Users.DOB
+FROM Users
+WHERE (((Users.Forename) Like "*" & Forms!Search_Form!FS_Forename & "*") And ((Users.Surname) Like "*" & Forms!Search_Form!FS_Surname & "*") And ((Users.DOB) Like "*" & Forms!Search_Form!FS_DOB & "*"));

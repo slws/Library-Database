@@ -1,0 +1,89 @@
+Option Compare Database
+'------------------------------------------------------------
+' CancelBtn_Click
+'
+'------------------------------------------------------------
+Private Sub CancelBtn_Click()
+On Error GoTo CancelBtn_Click_Err
+    DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+    DoCmd.Close acForm, "Returns_Search_Form"
+
+
+CancelBtn_Click_Exit:
+    Exit Sub
+
+CancelBtn_Click_Err:
+    MsgBox Error$
+    Resume CancelBtn_Click_Exit
+
+End Sub
+
+Private Sub SearchBook_Click()
+
+'------------------------------------------------------------
+' SearchBook_Click
+'
+'------------------------------------------------------------
+On Error GoTo SearchBook_Click_Err
+If IsNull(F_BID) Then
+    MsgBox ("No book to search? Try 'All Loans'.")
+Else
+Dim rbmb As Integer
+Dim rbqb As Integer
+Dim BookID As String
+    DoCmd.OpenQuery "Return_Books_Query", acViewNormal, acEdit
+    DoCmd.Close acQuery, "Return_Books_Query"
+    BookID = "[Books.ID]=" & Me.F_BID
+    rbqb = DCount("*", "Return_Books_Query", BookID)
+    
+If rbqb < 1 Then
+        rbmb = MsgBox("There are no current loans for this book!", vbCritical, "No Results!")
+            Exit Sub
+        End If
+
+    DoCmd.Close acForm, "Return_Books_Form"
+    DoCmd.OpenForm "Return_Books_Form", acNormal, "", "[Return_Books_Query]![Books]![ID]=" & Me![F_BID], acEdit, acNormal
+End If
+SearchBook_Click_Exit:
+    Exit Sub
+
+SearchBook_Click_Err:
+    MsgBox Error$
+    Resume SearchBook_Click_Exit
+
+End Sub
+
+Private Sub SearchLoans_Click()
+
+'------------------------------------------------------------
+' SearchLoans_Click
+'
+'------------------------------------------------------------
+On Error GoTo SearchLoans_Click_Err
+If IsNull(F_UID) Then
+    MsgBox ("No user to search? Try 'All Loans'.")
+Else
+Dim rbmu As Integer
+Dim rbqu As Integer
+Dim UserID As String
+    DoCmd.OpenQuery "Return_Books_Query", acViewNormal, acEdit
+    DoCmd.Close acQuery, "Return_Books_Query"
+    UserID = "[Users.ID]=" & Me.F_UID
+    rbqu = DCount("*", "Return_Books_Query", UserID)
+    
+If rbqu < 1 Then
+        rbmu = MsgBox("There are no current loans for this user!", vbCritical, "No Results!")
+            Exit Sub
+        End If
+
+    DoCmd.Close acForm, "Return_Books_Form"
+    DoCmd.OpenForm "Return_Books_Form", acNormal, "", "[Return_Books_Query]![Users]![ID]=" & Me![F_UID], acEdit, acNormal
+End If
+SearchLoans_Click_Exit:
+    Exit Sub
+
+SearchLoans_Click_Err:
+    MsgBox Error$
+    Resume SearchLoans_Click_Exit
+
+End Sub

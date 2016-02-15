@@ -1,0 +1,2 @@
+UPDATE Loans SET Loans.Returned = Date()
+WHERE (((Loans.ID)=[FORMS]![Return_Books_Form]![LoanID]));

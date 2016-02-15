@@ -1,0 +1,48 @@
+Option Compare Database
+'------------------------------------------------------------
+' CancelBtn_Click
+'
+'------------------------------------------------------------
+Private Sub CancelBtn_Click()
+On Error GoTo CancelBtn_Click_Err
+
+    If Me.Dirty Then
+        Me.Undo
+    End If
+    DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+    DoCmd.Close acForm, "New_Book_Form"
+
+
+CancelBtn_Click_Exit:
+    Exit Sub
+
+CancelBtn_Click_Err:
+    MsgBox Error$
+    Resume CancelBtn_Click_Exit
+
+End Sub
+
+'------------------------------------------------------------
+' SaveBtn_Click
+'
+'------------------------------------------------------------
+Private Sub SaveBtn_Click()
+On Error GoTo SaveBtn_Click_Err
+
+    On Error Resume Next
+    DoCmd.RunCommand acCmdSaveRecord
+    If (MacroError <> 0) Then
+        Beep
+        MsgBox MacroError.Description, vbOKOnly, ""
+    End If
+    DoCmd.GoToRecord acForm, "New_Book_Form", acNewRec
+
+
+SaveBtn_Click_Exit:
+    Exit Sub
+
+SaveBtn_Click_Err:
+    MsgBox Error$
+    Resume SaveBtn_Click_Exit
+
+End Sub

@@ -1,0 +1,2 @@
+UPDATE Books SET Books.Loaned = -1
+WHERE (((Books.ID)=[forms]![Loan_Form]![BookID]));

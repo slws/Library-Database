@@ -1,0 +1,186 @@
+Option Compare Database
+
+Const HWND_TOPMOST = -1
+Const HWND_NOTOPMOST = -2
+Const SWP_NOSIZE = &H1
+Const SWP_NOMOVE = &H2
+Const SWP_NOACTIVATE = &H10
+Const SWP_SHOWWINDOW = &H40
+
+Private Declare PtrSafe Sub SetWindowPos Lib "User32" (ByVal hWnd As Long, ByVal hWndInsertAfter As Long, ByVal X As Long, ByVal Y As Long, ByVal cx As Long, ByVal cy As Long, ByVal wFlags As Long)
+
+Private Sub Form_Load()
+
+End Sub
+
+
+'------------------------------------------------------------
+' PrintBarcodes_Click
+'
+'------------------------------------------------------------
+Private Sub PrintBarcodes_Click()
+On Error GoTo PrintBarcodes_Click_Err
+        DoCmd.OpenForm "Print_Barcodes_Form", acNormal, "", "", , acNormal
+
+PrintBarcodes_Click_Exit:
+    Exit Sub
+
+PrintBarcodes_Click_Err:
+    MsgBox Error$
+    Resume PrintBarcodes_Click_Exit
+
+End Sub
+
+'------------------------------------------------------------
+' AddBooks_Click
+'
+'------------------------------------------------------------
+Private Sub AddBooks_Click()
+On Error GoTo AddBooks_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="Return" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/200
+    ' _AXL:9/11/forms"><Statements><Action Name="MinimizeWindow"/><ConditionalBlock><If><Condition>DCount("*","Return_Books_Query")&gt;0</Condition><Statements><Action Name="OpenForm"><Argument Name="FormName">Returns_Search_Form</Argument></Action></Statemen
+    ' _AXL:ts></If><Else><Statements><Action Name="MessageBox"><Argument Name="Message">There are no current loans.</Argument><Argument Name="Title">No Loans to Query</Argument></Action><Action Name="OpenForm"><Argument Name="FormName">Main</Argument></Action
+    ' _AXL:></Statements></Else></ConditionalBlock></Statements></UserInterfaceMacro>
+    DoCmd.OpenForm "New_Book_Form", acNormal, "", "", , acNormal
+
+
+AddBooks_Click_Exit:
+    Exit Sub
+
+AddBooks_Click_Err:
+    MsgBox Error$
+    Resume AddBooks_Click_Exit
+
+End Sub
+'------------------------------------------------------------
+' Ctl_Search_Click
+'
+'------------------------------------------------------------
+Private Sub Search_Click()
+On Error GoTo Search_Click_Err
+
+    DoCmd.OpenForm "Search_Form", acNormal, "", "", , acNormal
+
+Search_Click_Exit:
+    Exit Sub
+
+Search_Click_Err:
+    MsgBox Error$
+    Resume Search_Click_Exit
+
+End Sub
+'------------------------------------------------------------
+' Return_Click
+'
+'------------------------------------------------------------
+Private Sub Return_Click()
+On Error GoTo Return_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For=" Search" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/20
+    ' _AXL:09/11/forms"><Statements><Action Name="MinimizeWindow"/><Action Name="OpenForm"><Argument Name="FormName">Search_Form</Argument></Action></Statements></UserInterfaceMacro>
+    If (DCount("*", "Return_Books_Query") > 0) Then
+        DoCmd.OpenForm "Returns_Search_Form", acNormal, "", "", , acNormal
+    Else
+        Beep
+        MsgBox "There are no current loans.", vbOKOnly, "No Loans to Query"
+        DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+    End If
+
+
+Return_Click_Exit:
+    Exit Sub
+
+Return_Click_Err:
+    MsgBox Error$
+    Resume Return_Click_Exit
+
+End Sub
+'------------------------------------------------------------
+' AddUsers_Click
+'
+'------------------------------------------------------------
+Private Sub AddUsers_Click()
+On Error GoTo AddUsers_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="Return" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/200
+    ' _AXL:9/11/forms"><Statements><Action Name="MinimizeWindow"/><ConditionalBlock><If><Condition>DCount("*","Return_Books_Query")&gt;0</Condition><Statements><Action Name="OpenForm"><Argument Name="FormName">Returns_Search_Form</Argument></Action></Statemen
+    ' _AXL:ts></If><Else><Statements><Action Name="MessageBox"><Argument Name="Message">There are no current loans.</Argument><Argument Name="Title">No Loans to Query</Argument></Action><Action Name="OpenForm"><Argument Name="FormName">Main</Argument></Action
+    ' _AXL:></Statements></Else></ConditionalBlock></Statements></UserInterfaceMacro>
+    DoCmd.OpenForm "New_User_Form", acNormal, "", "", , acNormal
+
+
+AddUsers_Click_Exit:
+    Exit Sub
+
+AddUsers_Click_Err:
+    MsgBox Error$
+    Resume AddUsers_Click_Exit
+
+End Sub
+'------------------------------------------------------------
+' LoanBooks_Click
+'
+'------------------------------------------------------------
+Private Sub Loan_Click()
+On Error GoTo Loan_Click_Err
+    DoCmd.OpenForm "Loan_Form", acNormal, "", "", , acNormal
+
+Loan_Click_Exit:
+    Exit Sub
+
+Loan_Click_Err:
+    MsgBox Error$
+    Resume Loan_Click_Exit
+
+End Sub
+
+'------------------------------------------------------------
+' LateBooks_Click
+'
+'------------------------------------------------------------
+Private Sub LateBooks_Click()
+On Error GoTo LateBooks_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="Loan" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/2009/
+    ' _AXL:11/forms"><Statements><Action Name="CloseWindow"><Argument Name="ObjectType">Form</Argument><Argument Name="ObjectName">Loan_Form</Argument><Argument Name="Save">No</Argument></Action></Statements></UserInterfaceMacro>
+    DoCmd.OpenQuery "Late_Books_Query", , acReadOnly
+    DoCmd.Minimize
+
+
+LateBooks_Click_Exit:
+    Exit Sub
+
+LateBooks_Click_Err:
+    MsgBox Error$
+    Resume LateBooks_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' PopularityReports_Click
+'
+'------------------------------------------------------------
+Private Sub PopularityReports_Click()
+On Error GoTo PopularityReports_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="LateBooks" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/
+    ' _AXL:2009/11/forms"><Statements><Action Name="OpenReport"><Argument Name="ReportName">Late_Books_Report</Argument></Action><Action Name="MinimizeWindow"/></Statements></UserInterfaceMacro>
+    DoCmd.Close acForm, "Pop_Form"
+    DoCmd.OpenForm "Pop_Form", acNormal, "", "", acReadOnly, acNormal
+
+
+PopularityReports_Click_Exit:
+    Exit Sub
+
+PopularityReports_Click_Err:
+    MsgBox Error$
+    Resume PopularityReports_Click_Exit
+
+End Sub

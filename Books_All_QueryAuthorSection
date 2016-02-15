@@ -1,0 +1,3 @@
+SELECT Books.ID, Books.Author, Books.Title, Books.Section, Books.Loaned
+FROM Books
+WHERE (((Books.Author) Like "*" & Forms!Search_Form!FS_Author & "*") And ((Books.Section) Like "*" & Forms!Search_Form!FS_Section & "*"));

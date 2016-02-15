@@ -1,0 +1,19 @@
+Option Compare Database
+'------------------------------------------------------------
+' CancelBtn_Click
+'
+'------------------------------------------------------------
+Private Sub CancelBtn_Click()
+On Error GoTo CancelBtn_Click_Err
+    DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+    DoCmd.Close acForm, "Print_Barcodes_Form"
+
+
+CancelBtn_Click_Exit:
+    Exit Sub
+
+CancelBtn_Click_Err:
+    MsgBox Error$
+    Resume CancelBtn_Click_Exit
+
+End Sub

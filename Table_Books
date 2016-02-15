@@ -1,0 +1,10 @@
+ID  Autonumber (Primary key)
+Author  Long Text
+Title Long Text
+DDC Number
+Type  Short Text
+Source  Short Text
+Purchased Date/Time
+Comments  Long Text
+Section Short Text
+Loaned Yes/No

@@ -1,0 +1,3 @@
+SELECT Users.Forename, Users.Surname, Users.DOB, Users.Comments, Loans.Book, Books.Title, Books.Author, Loans.Loaned, Loans.Due, Loans.Returned, Loans.User
+FROM Books INNER JOIN (Users INNER JOIN Loans ON Users.ID = Loans.User) ON Books.ID = Loans.Book
+WHERE (((Loans.User) Like "*" & [FORMS]![Search_Form]![F_UID] & "*"));

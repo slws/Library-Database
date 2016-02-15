@@ -1,0 +1,86 @@
+Option Compare Database
+'------------------------------------------------------------
+' SaveBtn_Click
+'
+'------------------------------------------------------------
+Private Sub SaveBtn_Click()
+On Error GoTo SaveBtn_Click_Err
+On Error Resume Next
+Dim lbm As Integer
+Dim lbq As Integer
+Dim missingEntity As String
+If IsNull(BookID) Then
+    missingEntity = MsgBox("No book specified. Please try again.", vbCritical, "No book specified") 'Check a book is selected
+    Exit Sub
+Else
+    If IsNull(User) Then
+        missingEntity = MsgBox("No user specified. Please try again.", vbCritical, "No user specified") 'Check a user is selected
+        Exit Sub
+    End If
+End If
+    DoCmd.OpenQuery "Late_Books_Query", acViewNormal, acEdit 'Open the LateBooksQuery to get updates, then close.
+    DoCmd.Close acQuery, "Late_Books_Query"
+    UserID = "[Users.ID]=" & Me.User 'Set the variable UserID to e.g. [Users.ID]=123
+    lbq = DCount(ID, "late_books_query", UserID) 'Check how many late books the user has
+If lbq > 0 Then 'If user has more than one late book, ask confirmation
+    lbm = MsgBox("User has overdue books. Do you want to continue?", vbOKCancel, "Overdue Books")
+    If lbm = vbCancel Then 'If cancelled undo changes and close form.
+        Me.Undo
+        DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+        DoCmd.Close acForm, "Loan_Form"
+        Exit Sub
+    End If
+End If
+        If (MacroError <> 0) Then
+            Beep
+            MsgBox MacroError.Description, vbOKOnly, ""
+        End If
+    DoCmd.RunCommand acCmdSaveRecord 'Save record, don't produce warnings, do update tables, then refresh form (close & reopen)
+    DoCmd.SetWarnings False
+    DoCmd.OpenQuery "BooksLoaned_UpdateTrue_Query", acViewNormal, acEdit
+    DoCmd.Close acQuery, "BooksLoaned_UpdateTrue_Query"
+    DoCmd.Close acForm, "Loan_Form"
+    MsgBox ("Book loaned")
+    DoCmd.OpenForm "Loan_Form", acNormal, "", "", , acNormal
+    DoCmd.GoToRecord acForm, "Loan_Form", acNewRec, 0
+
+SaveBtn_Click_Exit:
+    Exit Sub
+
+SaveBtn_Click_Err:
+    MsgBox Error$
+    Resume SaveBtn_Click_Exit
+
+End Sub
+
+
+'------------------------------------------------------------
+' CancelBtn_Click
+'
+'------------------------------------------------------------
+Private Sub CancelBtn_Click()
+On Error GoTo CancelBtn_Click_Err
+
+    ' _AXL:<?xml version="1.0" encoding="UTF-16" standalone="no"?>
+    ' <UserInterfaceMacro For="SaveBtn" Event="OnClick" xmlns="http://schemas.microsoft.com/office/accessservices/2009/11/application" xmlns:a="http://schemas.microsoft.com/office/accessservices/20
+    ' _AXL:09/11/forms"><Statements><Action Name="OnError"/><Action Name="SaveRecord"/><ConditionalBlock><If><Condition>[MacroError]&lt;&gt;0</Condition><Statements><Action Name="MessageBox"><Argument Name="Message">=[MacroError].[Description]</Argument></Act
+    ' _AXL:ion></Statements></If></ConditionalBlock><Action Name="SetWarnings"/><Action Name="OpenQuery"><Argument Name="QueryName">BooksLoaned_UpdateTrue_Query</Argument></Action><Action Name="CloseWindow"><Argument Name="ObjectType">Query</Argument><Argumen
+    ' _AXL:t Name="ObjectName">BooksLoaned_UpdateTrue_Query</Argument><Argument Name="Save">Yes</Argument></Action><Action Name="GoToRecord"><Argument Name="ObjectType">Form</Argument><Argument Name="ObjectName">Loan_Form</Argument><Argument Name="Record">New
+    ' _AXL:</Argument></Action></Statements></UserInterfaceMacro>
+    If Me.Dirty Then 'If modified, undo changes and close form.
+        Me.Undo
+    End If
+    DoCmd.OpenForm "Main", acNormal, "", "", , acNormal
+    DoCmd.Close acForm, "Loan_Form"
+
+
+CancelBtn_Click_Exit:
+    Exit Sub
+
+CancelBtn_Click_Err:
+    MsgBox Error$
+    Resume CancelBtn_Click_Exit
+
+End Sub
+
+

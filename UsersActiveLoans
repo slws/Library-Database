@@ -1,0 +1,3 @@
+SELECT Books.ID, Books.Author, Books.Title, Loans.Loaned, Loans.Due, Loans.Returned, Loans.User
+FROM Users INNER JOIN (Books INNER JOIN Loans ON Books.ID = Loans.Book) ON Users.ID = Loans.User
+WHERE (((Loans.User)=Forms!Search_Form!FS_User) And ((Books.Loaned)=Yes));

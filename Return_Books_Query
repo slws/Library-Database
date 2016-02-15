@@ -1,0 +1,4 @@
+SELECT Books.ID, Books.Author, Books.Title, Users.ID, Users.Forename, Users.Surname, Loans.Loaned, Loans.Due, Loans.Returned, Loans.ID
+FROM Users INNER JOIN (Books INNER JOIN Loans ON Books.ID = Loans.Book) ON Users.ID = Loans.User
+WHERE (((Loans.Returned) Is Null))
+ORDER BY Books.ID DESC;
